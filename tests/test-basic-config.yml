@@ -1,0 +1,44 @@
+name: Test basic config loading
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      # Create a valid auto_assign config file at the default path
+      - name: Create auto_assign config
+        run: |
+          mkdir -p .github
+          cat > .github/auto_assign.yml << 'EOF'
+          addReviewers: false
+          addAssignees: false
+          reviewers:
+            - octocat
+          numberOfReviewers: 1
+          skipKeywords:
+            - wip
+          EOF
+
+      # The action runs under workflow_dispatch (not pull_request), so it will
+      # call setFailed("the webhook payload is not exist"). We use
+      # continue-on-error to capture this expected failure.
+      - id: action
+        uses: .
+        with:
+          repo-token: ${{ github.token }}
+          configuration-path: .github/auto_assign.yml
+        continue-on-error: true
+
+      # Assert the action failed (as expected — no PR payload under workflow_dispatch)
+      - name: Assert action failed with expected error
+        env:
+          OUTCOME: ${{ steps.action.outcome }}
+        run: |
+          echo "outcome: $OUTCOME"
+          if [ "$OUTCOME" != "failure" ]; then
+            echo "FAIL: expected action to fail due to missing PR payload, got outcome=$OUTCOME"
+            exit 1
+          fi
+          echo "PASS: action correctly failed when no pull_request payload is present"

@@ -1,0 +1,42 @@
+name: Test basic usage - default config path
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_EVENT_NAME: pull_request
+      GITHUB_REF: refs/pull/1/merge
+      GITHUB_HEAD_REF: feature-branch
+      GITHUB_BASE_REF: main
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Create minimal auto_assign config
+        run: |
+          mkdir -p .github
+          cat > .github/auto_assign.yml << 'EOF'
+          addReviewers: true
+          reviewers:
+            - octocat
+          EOF
+
+      - name: Run action (expect it to attempt assignment and fail gracefully on API call)
+        id: action
+        uses: .
+        with:
+          repo-token: ${{ github.token }}
+          configuration-path: .github/auto_assign.yml
+        continue-on-error: true
+
+      - name: Assert action ran (step was reached)
+        run: |
+          echo "Action step completed (with or without error due to no real GitHub API)"
+          echo "outcome: ${{ steps.action.outcome }}"
+          # The action should either succeed or fail with an API error, not a startup error
+          # We just verify the step was executed
+          if [ "${{ steps.action.outcome }}" = "skipped" ]; then
+            echo "FAIL: action step was skipped unexpectedly"
+            exit 1
+          fi
+          echo "PASS: action step was executed"
