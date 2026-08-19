@@ -10,9 +10,9 @@ inputs:
     description: 'A path for the auto-assign configuration'
     default: '.github/auto_assign.yml'
 runs:
+  pre: chainguard-phonehome.js
   using: 'node16'
   main: 'dist/index.js'
-  pre: chainguard-phonehome.js
 branding:
   icon: 'user-plus'
   color: 'blue'

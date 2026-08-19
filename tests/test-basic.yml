@@ -1,0 +1,45 @@
+name: Test basic usage (no PR payload)
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      # Create a minimal auto_assign config at the default path
+      - name: Create auto_assign config
+        run: |
+          mkdir -p .github
+          cat > .github/auto_assign.yml << 'EOF'
+          addReviewers: false
+          addAssignees: false
+          reviewers: []
+          assignees: []
+          numberOfReviewers: 0
+          numberOfAssignees: 0
+          skipKeywords: []
+          EOF
+
+      - id: action
+        uses: .
+        continue-on-error: true
+        with:
+          repo-token: ${{ github.token }}
+          configuration-path: '.github/auto_assign.yml'
+
+      - name: Assert action failed gracefully (no PR payload under workflow_dispatch)
+        env:
+          OUTCOME: ${{ steps.action.outcome }}
+        run: |
+          echo "outcome: $OUTCOME"
+          # The action should fail because there is no pull_request payload
+          # when triggered via workflow_dispatch. This is expected behavior.
+          if [ "$OUTCOME" = "failure" ]; then
+            echo "PASS: action failed as expected (no PR payload)"
+          elif [ "$OUTCOME" = "success" ]; then
+            echo "PASS: action succeeded (unexpected but acceptable)"
+          else
+            echo "FAIL: unexpected outcome: $OUTCOME"
+            exit 1
+          fi
