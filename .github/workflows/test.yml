@@ -1,0 +1,30 @@
+name: 'Test'
+
+on: push
+
+permissions: {}
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: setup node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version-file: ./.node-version
+
+      - name: install
+        run: npm install
+
+      - name: build
+        run: npm run build
+
+      - name: test
+        run: npm test
+
+      - name: format check
+        run: npm run format-check

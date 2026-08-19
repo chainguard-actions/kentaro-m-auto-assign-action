@@ -1,0 +1,9 @@
+addReviewers: true
+addAssignees: false
+reviewers:
+  - reviewer1
+  - reviewer2
+numberOfReviewers: 1
+skipKeywords:
+  - WIP
+  - "[WIP]"
