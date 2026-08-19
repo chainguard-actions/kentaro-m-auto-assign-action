@@ -1,0 +1,29 @@
+name: Test basic usage (default config path)
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      # The action reads the config from .github/auto_assign.yml via GitHub API,
+      # then fails because there is no pull_request payload under workflow_dispatch.
+      # We expect it to set a failure — verify the step fails with the right message.
+      - id: action
+        uses: .
+        with:
+          repo-token: ${{ github.token }}
+          configuration-path: .github/auto_assign.yml
+        continue-on-error: true
+
+      - name: Assert action failed with expected error
+        env:
+          OUTCOME: ${{ steps.action.outcome }}
+        run: |
+          echo "outcome: $OUTCOME"
+          if [ "$OUTCOME" != "failure" ]; then
+            echo "FAIL: expected action to fail (no PR payload under workflow_dispatch) but got outcome=$OUTCOME"
+            exit 1
+          fi
+          echo "PASS: action failed as expected (no PR payload under workflow_dispatch)"

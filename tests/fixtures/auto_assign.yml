@@ -1,0 +1,12 @@
+# Auto-assign configuration fixture for testing
+addReviewers: false
+addAssignees: false
+reviewers:
+  - test-reviewer
+assignees:
+  - test-assignee
+numberOfReviewers: 1
+numberOfAssignees: 1
+skipKeywords:
+  - wip
+  - draft
