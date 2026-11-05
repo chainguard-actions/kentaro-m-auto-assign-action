@@ -4,8 +4,13 @@
   "version": "v2.0.1",
   "commit_sha": "a6d59add3a817df08cafa9b166367768d2c337f8",
   "url": "https://github.com/kentaro-m/auto-assign-action",
-  "policy_sha": "d636be7e43ef829af6e853da6b3c7566db9f72fe",
+  "policy_sha": "374911c4be584df24e6da57af2d990570ef0f859",
   "test_policy_sha": "843adf9e4b8f85d0c08b27b9d0b09dd094b54702",
   "test_agent_version": "2",
-  "harden_agent_version": "2"
+  "harden_agent_version": "2",
+  "dist_artifact": {
+    "gcs_uri": "gs://patch-actions-node-artifacts/dist-artifacts/kentaro-m/auto-assign-action/v2.0.1/sha256-1a714940c52faae84b883b84814c3b0292a9b5b66c9ccc2c661fc555fb343f17.tar.gz",
+    "sha256": "1a714940c52faae84b883b84814c3b0292a9b5b66c9ccc2c661fc555fb343f17",
+    "size_bytes": 506215
+  }
 }
